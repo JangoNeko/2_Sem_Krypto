@@ -49,10 +49,29 @@ def schiffy(key, msg):
         temp_R = L ^ msg
         L = temp_L
         R = temp_R
+        if i == 0:
+            assert f"{msg:016x}" == "94dfb49607c198ab"
+
+        if i == 1:
+            assert f"{msg:016x}" == "b0aa7cca50e95fb1"
+
+        if i == 2:
+            assert f"{msg:016x}" == "1e9d6324e9783573"
+
+        if i == 3:
+            assert f"{msg:016x}" == "01a6283b0f33c8f0"
+
+        if i == 29:
+            assert f"{msg:016x}" == "f7ffea032144154a"
+
+        if i == 30:
+            assert f"{msg:016x}" == "7fac6b4146d4f4c6"
+
+        if i == 31:
+            assert f"{msg:016x}" == "2a66d3471f7cb499"
         i += 1
     msg = L << 64 | R
-    return hex(msg)
-
-
+    return f"{msg:016x}"
+assert schiffy("deadbeef000000000000000badc0ffee", "00000000000000000000000000000000") == "b743f2fb342c51bfab950797083f61e9"
 
 
