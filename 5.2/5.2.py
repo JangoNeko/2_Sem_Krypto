@@ -1,6 +1,3 @@
-from sys import byteorder
-
-
 def sbox(s):
     s = [s]
     i = 1
@@ -17,8 +14,7 @@ def sbox(s):
 def keygen(key, rounds):
     if isinstance(key, str):
         key = int(key, 16)
-    i = 0
-    key = ((((key << ((7 * i) % 128)) | (key >> (128 - ((7 * i) % 128))))& ((1<<128)-1)) ^ 0xabcdef)
+    key = ((((key << ((7 * 0) % 128)) | (key >> (128 - ((7 * 0) % 128))))& ((1<<128)-1)) ^ 0xabcdef)
     keys = [key]
     i = 1
     while i < rounds:
@@ -32,45 +28,31 @@ def keygen(key, rounds):
 
 
 def schiffy(key, msg):
-
     if isinstance(msg, str):
         msg = int(msg, 2)
-    key = keygen("deadbeef000000000000000badc0ffee", 32)
+    keys = keygen(key, 32)
     box = sbox(170)
+    L = (msg >> 64) & 0xFFFFFFFFFFFFFFFF
+    R = msg & 0xFFFFFFFFFFFFFFFF
     i = 0
     while i < 32:
-        print(f"msg: {hex(msg)}")
-        roundkey = key[i]
-        print(f"roundkey: {hex(roundkey)}")
+        roundkey = keys[i]
         msb = (roundkey >> 64)
-        print(f"msb: {hex(msb)}")
         lsb = roundkey & 0xFFFFFFFFFFFFFFFF
-        print(f"lsb: {hex(lsb)}")
-        msg = (msg ^ msb)
-        print(f"msg nach msb: {hex(msg)}")
+        tmp_R = (R ^ msb)
         smsg = 0
         for ii in range(8):
-            tmp = (msg >> (8 * (7 - ii))) & 0xFF
+            tmp = (tmp_R >> (8 * (7 - ii))) & 0xFF
             smsg = (smsg << 8 ) + box[tmp]
         msg = smsg ^ lsb
-        print(f"msg nach runde {i + 1}: {hex(msg)}\n---------------------------")
-        if i == 0:
-            assert hex(msg)[2:] == "94dfb49607c198ab"
-        if i == 1:
-            assert hex(msg)[2:] == "b0aa7cca50e95fb1"
-        if i == 2:
-            assert hex(msg)[2:] == "1e9d6324e9783573"
-        if i == 3:
-            assert hex(msg)[2:] == "01a6283b0f33c8f0"
-        if i == 29:
-            assert hex(msg)[2:] == "f7ffea032144154a"
-        if i == 30:
-            assert hex(msg)[2:] == "7fac6b4146d4f4c6"
-        if i == 31:
-            assert hex(msg)[2:] == "2a66d3471f7cb499"
+        temp_L = R
+        temp_R = L ^ msg
+        L = temp_L
+        R = temp_R
         i += 1
+    msg = L << 64 | R
     return hex(msg)
 
 
 
-print(schiffy("deadbeef000000000000000badc0ffee", "00000000000000000000000000000000"))
+
