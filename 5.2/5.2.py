@@ -34,21 +34,43 @@ def keygen(key, rounds):
 def schiffy(key, msg):
 
     if isinstance(msg, str):
-        msg = msg.encode("utf-8")
-    msg = int.from_bytes(msg, "big")
+        msg = int(msg, 2)
     key = keygen("deadbeef000000000000000badc0ffee", 32)
     box = sbox(170)
     i = 0
     while i < 32:
+        print(f"msg: {hex(msg)}")
         roundkey = key[i]
-        msb = (roundkey >> 64) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        lsb = roundkey & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        msg = (msg ^ msb) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-        chunk = msg.to_bytes(16, byteorder= 'big')
-        smsg = bytes([box[b] for b in chunk])
-        msg = int.from_bytes(smsg, byteorder = 'big' ) ^ lsb
+        print(f"roundkey: {hex(roundkey)}")
+        msb = (roundkey >> 64)
+        print(f"msb: {hex(msb)}")
+        lsb = roundkey & 0xFFFFFFFFFFFFFFFF
+        print(f"lsb: {hex(lsb)}")
+        msg = (msg ^ msb)
+        print(f"msg nach msb: {hex(msg)}")
+        smsg = 0
+        for ii in range(8):
+            tmp = (msg >> (8 * (7 - ii))) & 0xFF
+            smsg = (smsg << 8 ) + box[tmp]
+        msg = smsg ^ lsb
+        print(f"msg nach runde {i + 1}: {hex(msg)}\n---------------------------")
+        if i == 0:
+            assert hex(msg)[2:] == "94dfb49607c198ab"
+        if i == 1:
+            assert hex(msg)[2:] == "b0aa7cca50e95fb1"
+        if i == 2:
+            assert hex(msg)[2:] == "1e9d6324e9783573"
+        if i == 3:
+            assert hex(msg)[2:] == "01a6283b0f33c8f0"
+        if i == 29:
+            assert hex(msg)[2:] == "f7ffea032144154a"
+        if i == 30:
+            assert hex(msg)[2:] == "7fac6b4146d4f4c6"
+        if i == 31:
+            assert hex(msg)[2:] == "2a66d3471f7cb499"
         i += 1
     return hex(msg)
+
 
 
 print(schiffy("deadbeef000000000000000badc0ffee", "00000000000000000000000000000000"))
