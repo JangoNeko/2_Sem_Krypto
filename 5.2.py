@@ -1,3 +1,6 @@
+from sys import byteorder
+
+
 def sbox(s):
     s = [s]
     i = 1
@@ -32,8 +35,20 @@ def schiffy(key, msg):
 
     if isinstance(msg, str):
         msg = msg.encode("utf-8")
+    msg = int.from_bytes(msg, "big")
     key = keygen("deadbeef000000000000000badc0ffee", 32)
     box = sbox(170)
+    i = 0
+    while i < 32:
+        roundkey = key[i]
+        msb = (roundkey >> 64) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        lsb = roundkey & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        msg = (msg ^ msb) & 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+        chunk = msg.to_bytes(16, byteorder= 'big')
+        smsg = bytes([box[b] for b in chunk])
+        msg = int.from_bytes(smsg, byteorder = 'big' ) ^ lsb
+        i += 1
+    return hex(msg)
 
 
-print(sbox(170))
+print(schiffy("deadbeef000000000000000badc0ffee", "00000000000000000000000000000000"))
