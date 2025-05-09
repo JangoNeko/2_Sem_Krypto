@@ -14,8 +14,7 @@ def sbox(s):
 def keygen(key, rounds):
     if isinstance(key, str):
         key = int(key, 16)
-    key = ((((key << ((7 * 0) % 128)) | (key >> (128 - ((7 * 0) % 128))))& ((1<<128)-1)) ^ 0xabcdef)
-    keys = [key]
+    keys = [((((key << ((7 * 0) % 128)) | (key >> (128 - ((7 * 0) % 128))))& ((1<<128)-1)) ^ 0xabcdef)]
     i = 1
     while i < rounds:
         keys.append(((((keys[i-1] << ((7 * i) % 128)) | (keys[i - 1] >> (128 - ((7 * i) % 128))))& ((1<<128)-1)) ^ 0xabcdef))
