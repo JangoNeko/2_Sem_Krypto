@@ -66,8 +66,8 @@ def schiffy_cbc_enc(key, msg):
 
 key = "08150000000000000000000000004711"
 messages = b"According to all known laws of aviation, there is no way a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible."
-with open("entire_movie.txt", "rb") as f:
+with open("nik.txt", "rb") as f:
     message = f.read()
 cypher = schiffy_cbc_enc(key, message)
-with open("alternative.bin", "wb") as f:                                                        # direkt in file schreiben weil ich bin faul
+with open("nik.bin", "wb") as f:                                                        # direkt in file schreiben weil ich bin faul
     f.write(cypher)
