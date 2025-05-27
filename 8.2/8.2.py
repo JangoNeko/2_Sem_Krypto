@@ -25,10 +25,16 @@ def xor_bytes(a, b):
     return bytes(x ^ y for x, y in zip(a, b))
 
 def oaep_decode():
-    with open("ciphertext.bin", "rb") as f:
+    '''
+    with open("test.bin", "rb") as f:
         encMsg = f.read()
-    encMsg = int.from_bytes(encMsg, 'big')
+    '''
+    encMsg = 0x70E40522221907D40B09A48E5E64F20B867479B484CDE3B713CC309F9152A19C12850D83759888045B52D36D59E6AC4316A96C5035DBB78443F27F1452FAF38CA25EA8414F13AF48CBFE1506E706EE2896A3236616EA0897B6E994B094680F5835D8CF3CF7FB470F527450E07BAD7D173FE668EEAC8944D8B666A3A5AEC7CA92
+    print(encMsg)
+    #encMsg = int.from_bytes(encMsg, 'big')
     oaep = rsa_decode(encMsg)
+
+    print(oaep.hex())
 
     if oaep[0] != 0:
         print("error: no leading 0")
@@ -42,7 +48,9 @@ def oaep_decode():
 
     hash = data[:20]
     rest = data[20:]
-
+    print(data.hex())
+    print(hash.hex())
+    print(rest.hex())
     Z = 0
     while Z < len(rest) and rest[Z] == 0:
         Z += 1
