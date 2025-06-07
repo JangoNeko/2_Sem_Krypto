@@ -59,8 +59,8 @@ def oaep_decode():
     msg = rest[Z + 1:]
     assert authenticate(hash, msg)
     print(msg)
-#    with open("plaintext_self.bin", "wb") as f:
-#        f.write(msg)
+    with open("plaintext_self.bin", "wb") as f:
+        f.write(msg)
     return
 
 oaep_decode()
